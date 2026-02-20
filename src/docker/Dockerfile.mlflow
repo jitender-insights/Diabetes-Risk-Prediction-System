@@ -21,6 +21,8 @@ COPY requirements.txt .
 # Install Python dependencies, forcing pre-compiled wheels for google-re2 to avoid build issues
 # Use pre-built wheels for google-re2 to avoid Bazel build issues
 RUN pip install --only-binary :all: google-re2 || true && \
+    # Upgrade pip, setuptools, and wheel to get compatible pre-built wheels
+    pip install --upgrade pip setuptools wheel && \
     pip install --no-cache-dir -r requirements.txt
 
 # Expose MLflow tracking server port

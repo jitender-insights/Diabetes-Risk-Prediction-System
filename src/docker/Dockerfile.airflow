@@ -20,7 +20,11 @@ COPY requirements.txt /requirements.txt
 # Install Python dependencies using Airflow constraints to avoid google-re2 build issues
 # Use pre-built wheels for google-re2 to avoid Bazel build issues
 RUN pip install --only-binary :all: google-re2 || true && \
-    pip install --no-cache-dir apache-airflow==2.2.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.0/constraints-3.9.txt" && \
+    # If google-re2 fails to install, block it to prevent build failures
+    pip install --no-deps --no-cache-dir apache-airflow==2.2.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.0/constraints-3.9.txt" || \
+    pip install --no-deps --no-binary google-re2 --no-cache-dir apache-airflow==2.2.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.0/constraints-3.9.txt" && \
+    # Upgrade pip, setuptools, and wheel to get compatible pre-built wheels
+    pip install --upgrade pip setuptools wheel && \
     pip install --no-cache-dir -r /requirements.txt
 
 # Copy Airflow configuration
