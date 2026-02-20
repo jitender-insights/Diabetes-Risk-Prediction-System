@@ -19,8 +19,9 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies, forcing pre-compiled wheels for google-re2 to avoid build issues
+RUN pip install --no-cache-dir google-re2 --only-binary=:all: && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy only the API code
 COPY src/api ./src/api

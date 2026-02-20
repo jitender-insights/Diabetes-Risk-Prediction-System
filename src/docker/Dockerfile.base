@@ -19,8 +19,9 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements files
 COPY requirements.txt requirements-dev.txt ./
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+# Install Python dependencies using Airflow constraints to avoid google-re2 build issues
+RUN pip install --no-cache-dir apache-airflow==2.2.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.0/constraints-3.9.txt" && \
+    pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
 
 # Copy project code
 COPY . .
