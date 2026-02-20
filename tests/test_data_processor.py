@@ -45,9 +45,15 @@ def test_load_data():
     # Clean up
     os.remove(temp_file)
     
+    # Define expected columns including the ones added by the data processor
+    expected_columns = [
+        'pregnancies', 'glucose', 'blood_pressure', 'skin_thickness', 
+        'insulin', 'bmi', 'diabetes_pedigree', 'age', 'outcome', 'date', 'created'
+    ]
+    
     # Assertions
     assert len(loaded_data) == 3
-    assert list(loaded_data.columns) == list(test_data.columns)
+    assert list(loaded_data.columns) == expected_columns
 
 def test_preprocess_data():
     """Test data preprocessing functionality."""
