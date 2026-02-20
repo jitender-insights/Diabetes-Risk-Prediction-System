@@ -27,6 +27,8 @@ jobs:
         python -m pip install --upgrade pip
         # Install build dependencies for packages like google-re2
         sudo apt-get update && sudo apt-get install -y build-essential cmake
+        # Use pre-built wheels for google-re2 to avoid Bazel build issues
+        pip install --only-binary :all: google-re2 || true
         # Install apache-airflow with constraints first to avoid google-re2 build issues
         pip install apache-airflow==2.2.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.0/constraints-3.9.txt"
         pip install -r requirements.txt

@@ -19,7 +19,8 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 
 # Install Python dependencies, forcing pre-compiled wheels for google-re2 to avoid build issues
-RUN pip install --no-cache-dir google-re2 --only-binary=:all: && \
+# Use pre-built wheels for google-re2 to avoid Bazel build issues
+RUN pip install --only-binary :all: google-re2 || true && \
     pip install --no-cache-dir -r requirements.txt
 
 # Expose MLflow tracking server port
