@@ -1,0 +1,30 @@
+# Use Apache Airflow official image
+FROM apache/airflow:2.2.0
+
+# Switch to root to install packages
+USER root
+
+# Install additional dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Switch back to airflow user
+USER airflow
+
+# Copy requirements
+COPY requirements.txt /requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# Copy Airflow configuration
+COPY src/airflow/airflow.cfg /opt/airflow/airflow.cfg
+
+# Copy DAGs
+COPY src/airflow/dags /opt/airflow/dags
+
+# Set environment variables
+ENV AIRFLOW__CORE__FERNET_KEY=''
+ENV AIRFLOW__CORE__EXECUTOR='LocalExecutor'
+ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN='sqlite:////opt/airflow/airflow.db'

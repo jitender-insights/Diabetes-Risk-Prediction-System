@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # API Service
+  api:
+    build:
+      context: .
+      dockerfile: src/docker/Dockerfile.api
+    container_name: diabetes-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./models:/app/models
+    environment:
+      - ENVIRONMENT=development
+    networks:
+      - mlops-network
+
+  # MLflow Tracking Server
+  mlflow-server:
+    build:
+      context: .
+      dockerfile: src/docker/Dockerfile.mlflow
+    container_name: mlflow-tracking-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data/mlflow:/mlflow-artifacts
+      - ./mlflow.db:/mlflow.db
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+    networks:
+      - mlops-network
+
+networks:
+  mlops-network:
+    driver: bridge

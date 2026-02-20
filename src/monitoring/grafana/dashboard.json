@@ -1,0 +1,184 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Diabetes Prediction API",
+    "tags": ["mlops", "diabetes", "prediction"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "25s",
+    "rows": [
+      {
+        "title": "Overview",
+        "panels": [
+          {
+            "id": 1,
+            "title": "API Health Status",
+            "type": "singlestat",
+            "span": 4,
+            "targets": [
+              {
+                "expr": "diabetes_api_health_status",
+                "format": "time_series"
+              }
+            ],
+            "mappingType": 1,
+            "mappingTypes": [
+              {
+                "name": "value to text",
+                "value": 1
+              },
+              {
+                "name": "range to text",
+                "value": 2
+              }
+            ],
+            "rangeMaps": [
+              {
+                "from": "0",
+                "to": "0",
+                "text": "Unhealthy"
+              },
+              {
+                "from": "1",
+                "to": "1",
+                "text": "Healthy"
+              }
+            ],
+            "thresholds": "0,1",
+            "colors": ["#d44a3a", "#FF780A", "#299c46"]
+          },
+          {
+            "id": 2,
+            "title": "Total Predictions",
+            "type": "singlestat",
+            "span": 4,
+            "targets": [
+              {
+                "expr": "sum(diabetes_predictions_total)",
+                "format": "time_series"
+              }
+            ],
+            "prefix": "",
+            "postfix": " predictions"
+          },
+          {
+            "id": 3,
+            "title": "Model Confidence",
+            "type": "gauge",
+            "span": 4,
+            "targets": [
+              {
+                "expr": "diabetes_model_confidence",
+                "format": "time_series"
+              }
+            ],
+            "minValue": 0,
+            "maxValue": 1,
+            "thresholds": "0.5,0.7,0.9",
+            "colors": ["#d44a3a", "#FF780A", "#299c46"]
+          }
+        ]
+      },
+      {
+        "title": "Prediction Metrics",
+        "panels": [
+          {
+            "id": 4,
+            "title": "Predictions Over Time",
+            "type": "graph",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "rate(diabetes_predictions_total[5m])",
+                "format": "time_series",
+                "legendFormat": "{{outcome}}"
+              }
+            ],
+            "yaxes": [
+              {
+                "format": "short",
+                "label": "Requests per second"
+              },
+              {
+                "format": "short"
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "title": "Prediction Duration",
+            "type": "graph",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, rate(diabetes_prediction_duration_seconds_bucket[5m]))",
+                "format": "time_series",
+                "legendFormat": "95th percentile"
+              },
+              {
+                "expr": "histogram_quantile(0.5, rate(diabetes_prediction_duration_seconds_bucket[5m]))",
+                "format": "time_series",
+                "legendFormat": "Median"
+              },
+              {
+                "expr": "rate(diabetes_prediction_duration_seconds_sum[5m]) / rate(diabetes_prediction_duration_seconds_count[5m])",
+                "format": "time_series",
+                "legendFormat": "Average"
+              }
+            ],
+            "yaxes": [
+              {
+                "format": "s",
+                "label": "Duration (seconds)"
+              },
+              {
+                "format": "short"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Prediction Distribution",
+        "panels": [
+          {
+            "id": 6,
+            "title": "Prediction Outcomes",
+            "type": "piechart",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "diabetes_predictions_total",
+                "format": "time_series",
+                "legendFormat": "{{outcome}}"
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "title": "Confidence Distribution",
+            "type": "graph",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "diabetes_model_confidence",
+                "format": "time_series",
+                "legendFormat": "Confidence"
+              }
+            ],
+            "yaxes": [
+              {
+                "format": "percentunit",
+                "label": "Confidence Level"
+              },
+              {
+                "format": "short"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
