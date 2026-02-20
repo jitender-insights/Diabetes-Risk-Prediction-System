@@ -1,4 +1,5 @@
 # Development dependencies
+pip>=23.1 setuptools>=67.0.0 packaging>=23.0
 dvc>=2.0.0
 black>=21.0.0
 flake8>=3.9.0
